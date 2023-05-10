@@ -74,6 +74,7 @@ def csv_upload(request):
     return redirect('/')
 
 
+    
 def get_code(request):
     if request.method == 'POST':
         request_code = request.POST['code']
@@ -83,15 +84,15 @@ def get_code(request):
                 os.remove(os.path.join(export_csv_dir, files[0]))
         except:
             pass
-        store_code_objects = StoreCode.objects.filter(code = request_code)
+        store_code_objects = StoreCode.objects.filter(code=request_code)
         if store_code_objects:
-            StoreCode.objects.filter(code = request_code).update(code = request_code, new_location = new_location)
+            StoreCode.objects.filter(code=request_code).update(code=request_code, new_location=new_location)
             messages.success(request, "Record Updated Successfully")
         else:
-            StoreCode.objects.create(code = request_code, new_location = new_location)
+            StoreCode.objects.create(code=request_code, new_location=new_location)
             messages.success(request, "Record not available new record inserted")
           
-        existing_data = StoreCode.objects.filter(is_deleted = False)
+        existing_data = StoreCode.objects.filter(is_delete=False)
         with open(os.path.join(export_csv_dir, file_name), mode='w', newline='') as export_file:
             writer = csv.writer(export_file)
             writer.writerow(['Code', 'Name', 'Old Location', 'New Location', 'Coming Stock', 'Stock'])
@@ -109,8 +110,7 @@ def get_code(request):
             for obj in existing_data:
                 writer.writerow([obj.code, obj.name, obj.old_location, obj.new_location, obj.coming_stock, obj.stock]) 
     return redirect('/')
-    
-    
+
 def index(request): 
     return render(request, 'index.html')
 
