@@ -47,11 +47,11 @@ def csv_upload(request):
         # create the new data
         for row in data:
             StoreCode.objects.create(
-                code = row[0],
-                name = row[1],
-                old_location = str(row[1]).split("_")[0] if str(row[1]).split("_")[0] else None,
-                coming_stock = row[4],
-                stock = row[5]
+                code = row['Code'],
+                name = row['Name'],
+                old_location = str(row['Code']).split("_")[0] if str(row['Code']).split("_")[0] else None,
+                coming_stock = row['Coming Stock'],
+                stock = row['Stock']
             )
         
         existing_data = StoreCode.objects.filter(is_delete=False)
