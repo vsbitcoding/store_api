@@ -1,11 +1,9 @@
 from django.contrib import admin
-from .models import *
-# Register your models here.
-from django.contrib import admin
 from .models import StoreCode
 
-class YourModelAdmin(admin.ModelAdmin):
-    def get_list_display(self, request):
-        return [field.name for field in self.model._meta.fields]
+class StoreCodeAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'old_location', 'new_location', 'coming_stock', 'stock', 'is_delete']
+    list_filter = ['is_delete']
 
-admin.site.register(StoreCode, YourModelAdmin)
+admin.site.register(StoreCode, StoreCodeAdmin)
+

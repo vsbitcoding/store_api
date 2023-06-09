@@ -237,13 +237,13 @@
                 <div id="progress-bar"></div>
             </div>
         </div>
-    <hr >
+        <hr>
         <div class="all_button">
             <p><a style="margin:20px 0;background:red;" onclick="showPasswordDialog()">Delete All Data</a></p>
             <p><a id="csv_all_path_id" download>Export All Data</a></p>
         </div>
 
-        
+
 
         <progress id="progressBar" value="0" max="100" style="width:100%; display:none;margin-top: 20px;"></progress>
         <h3 id="status"></h3>
@@ -254,63 +254,86 @@
 </body>
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <script>
-        function showPasswordDialog() {
-            Swal.fire({
-                title: 'Enter Password',
-                html: '<input type="password" id="password-field" class="swal2-input">',
-                showCancelButton: true,
-                confirmButtonText: 'Submit',
-                cancelButtonText: 'Cancel',
-                preConfirm: function () {
-                    return new Promise(function (resolve) {
-                        resolve({
-                            password: document.getElementById('password-field').value
-                        });
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function showPasswordDialog() {
+        Swal.fire({
+            title: 'Enter Password',
+            html: '<input type="password" id="password-field" class="swal2-input">',
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            cancelButtonText: 'Cancel',
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    resolve({
+                        password: document.getElementById('password-field').value
                     });
-                },
-                allowOutsideClick: false
-            }).then(function (result) {
-                if (result.value) {
-                    var password = result.value.password;
-                    if (password === "1234") {
-                        fetch('/api/all-delete', {
-                            method: 'DELETE'
-                          })
-                          .then(response => response.json())
-                          .then(data => {
-                                Swal.fire({
-                                    title: 'Success',
-                                    text: 'Data was successfully deleted',
-                                    icon: 'success'
-                                });
-                                window.location.reload()
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Failed to call API',
-                                    icon: 'error'
-                                });
+                });
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.value) {
+                var password = result.value.password;
+                if (password === "1234") {
+                    fetch('/api/all-delete', {
+                        method: 'DELETE'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            Swal.fire({
+                                title: 'Success',
+                                text: 'Data was successfully deleted',
+                                icon: 'success'
                             });
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Password is incorrect',
-                            icon: 'error'
+                            window.location.reload()
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to call API',
+                                icon: 'error'
+                            });
                         });
-                    }
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Password is incorrect',
+                        icon: 'error'
+                    });
                 }
-            });
-        }
-    </script>
-    
+            }
+        });
+    }
+
+    var settings = {
+        "url": "/api/export-csv",
+        "method": "POST",
+        "timeout": 0,
+    };
+
+    // Send the AJAX request
+    $.ajax(settings).done(function(response) {
+        var csv_path = response.csv_path;
+        $('#csv_path_id').attr('href', csv_path);
+    });
+
+
+    var settings = {
+        "url": "/api/export-all-csv",
+        "method": "POST",
+        "timeout": 0,
+    };
+    $.ajax(settings).done(function (response) {
+        var csv_path = response.csv_path;
+        $('#csv_all_path_id').attr('href', csv_path);
+    });
+</script>
+
 <script>
     $(window).on('load', function () {
         $('#code_value').focus();
-         $('#code_value').on('click', function () {
+        $('#code_value').on('click', function () {
             $('#code_value').removeAttr('inputmode');
         });
 
@@ -326,31 +349,9 @@
         }, 1000);
     });
 
-    var settings = {
-        "url": "/api/csv_path",
-        "method": "POST",
-        "timeout": 0,
-        "xhr": function () {
-            var xhr = new window.XMLHttpRequest();
-            xhr.upload.addEventListener("progress", function (evt) {
-                if (evt.lengthComputable) {
-                    var percentComplete = (evt.loaded / evt.total) * 100;
-                    $('#progress-bar').css('width', percentComplete + '%');
-                    $('#progress-bar').html(percentComplete.toFixed(2) + '%');
-                }
-            }, false);
-            return xhr;
-        }
-    };
-    $.ajax(settings).done(function (response) {
-        var csv_path = response.csv_path;
-        $('#csv_path_id').attr('href', csv_path);
-    });
-</script>
-<script>
     $(window).on('load', function () {
         $('#code_value').focus();
-         $('#code_value').on('click', function () {
+        $('#code_value').on('click', function () {
             $('#code_value').removeAttr('inputmode');
         });
 
@@ -366,28 +367,6 @@
         }, 1000);
     });
 
-    var settings = {
-        "url": "/api/export-all",
-        "method": "POST",
-        "timeout": 0,
-        "xhr": function () {
-            var xhr = new window.XMLHttpRequest();
-            xhr.upload.addEventListener("progress", function (evt) {
-                if (evt.lengthComputable) {
-                    var percentComplete = (evt.loaded / evt.total) * 100;
-                    $('#progress-bar').css('width', percentComplete + '%');
-                    $('#progress-bar').html(percentComplete.toFixed(2) + '%');
-                }
-            }, false);
-            return xhr;
-        }
-    };
-    $.ajax(settings).done(function (response) {
-        var csv_path = response.csv_path;
-        $('#csv_all_path_id').attr('href', csv_path);
-    });
-</script>
-<script>
     function _(el) {
         return document.getElementById(el);
     }
@@ -490,33 +469,33 @@
     const codeInput = document.getElementById('code_value');
 
     codeInput.addEventListener('input', () => {
-      if (codeInput.value === '') {
-        location.reload();
-      } 
+        if (codeInput.value === '') {
+            location.reload();
+        }
     });
-    
+
     newLocationInput.addEventListener('input', () => {
-      if (newLocationInput.value === '') {
-        codeInput.value = '';
-        codeInput.focus();
-      } 
+        if (newLocationInput.value === '') {
+            codeInput.value = '';
+            codeInput.focus();
+        }
     });
 
     let clicked = false;
-    document.addEventListener('visibilitychange', function() {
-      if (!document.hidden && !clicked) {
-        codeInput.click();
-        clicked = true;
-        document.removeEventListener('visibilitychange', arguments.callee);
-      }
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && !clicked) {
+            codeInput.click();
+            clicked = true;
+            document.removeEventListener('visibilitychange', arguments.callee);
+        }
     });
-      
-      codeInput.addEventListener('change', function(event) {
+
+    codeInput.addEventListener('change', function (event) {
         const newLocationInput = document.getElementById('new_location_value');
         newLocationInput.focus();
-      });
+    });
 
-   $(document).ready(function () {
+    $(document).ready(function () {
         $('#code_value').on('change', function () {
             $('#new_location_value').focus();
         });
@@ -530,7 +509,7 @@
         $('#new_location_value').on('blur', function () {
             $('#new_location_value').attr('inputmode', 'none');
         });
-     });
+    });
 
 </script>
 
