@@ -34,6 +34,7 @@ def csv_upload(request):
             # Invalid file format
             return HttpResponse("Invalid file format", status=400)
 
+        dataframe.fillna('', inplace= True)
         data = dataframe.to_dict('records')
 
         # Create the new data using bulk_create()
@@ -41,7 +42,7 @@ def csv_upload(request):
             StoreCode(
                 code=row['Code'],
                 name=row['Name'],
-                old_location=str(row['Name']).split("_")[0] if str(row['Name']).split("_")[0] else None,
+                old_location=str(row['Name']).split("_")[0] if str(row['Name']).split("_")[0] else '',
                 new_location=row['New Location'],
                 coming_stock=row['Coming Stock'],
                 stock=row['Stock']
